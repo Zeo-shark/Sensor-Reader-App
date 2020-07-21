@@ -1,0 +1,2 @@
+rootProject.name='Tensorflow Lite Inference'
+include ':app'
