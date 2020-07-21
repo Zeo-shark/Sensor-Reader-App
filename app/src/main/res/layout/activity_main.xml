@@ -74,8 +74,7 @@
     <TextView
         android:id="@+id/text_out"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:text="Model output" />
 
     <Button
@@ -83,6 +82,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Model Inference" />
+
+    <TextView
+        android:id="@+id/rawData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sensor"
+        />
 
 
 </LinearLayout>
