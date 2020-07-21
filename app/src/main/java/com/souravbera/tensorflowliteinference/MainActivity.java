@@ -10,13 +10,17 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.souravbera.tensorflowliteinference.Models.SensorData;
 import com.souravbera.tensorflowliteinference.Sensor.SensorRawDataAG;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -31,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     TextView xaValue, yaValue, zaValue, xgValue, ygValue, zgValue;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
+    private Sensor gyroscopeSensor;
+    private ArrayList<SensorData> accSensorEventData = new ArrayList<>();
+    private ArrayList<SensorData> gyroSensorEventData = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +64,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 // Initializing SensorManager
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
-        sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_FASTEST);
 
+
+        CountDownTimer count = new CountDownTimer(5000, 4900) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onFinish() {
+                rawData.setText(
+                        "Acc0: " + Arrays.toString(accSensorEventData.get(0).getValues()) + " || " + accSensorEventData.get(0).getTimestamp() + "\n" +
+                                "Acc1: " + Arrays.toString(accSensorEventData.get(1).getValues()) + " || " + accSensorEventData.get(1).getTimestamp() + "\n" +
+                                "Acc2: " + Arrays.toString(accSensorEventData.get(2).getValues()) + " || " + accSensorEventData.get(2).getTimestamp() + "\n" +
+                                "Acc3: " + Arrays.toString(accSensorEventData.get(3).getValues()) + " || " + accSensorEventData.get(3).getTimestamp() + "\n\n\n" +
+
+                                "Gyr0: " + Arrays.toString(gyroSensorEventData.get(0).getValues()) + " || " + gyroSensorEventData.get(0).getTimestamp() + "\n" +
+                                "Gyr1: " + Arrays.toString(gyroSensorEventData.get(1).getValues()) + " || " + gyroSensorEventData.get(1).getTimestamp() + "\n" +
+                                "Gyr2: " + Arrays.toString(gyroSensorEventData.get(2).getValues()) + " || " + gyroSensorEventData.get(2).getTimestamp() + "\n" +
+                                "Gyr3: " + Arrays.toString(gyroSensorEventData.get(3).getValues()) + " || " + gyroSensorEventData.get(3).getTimestamp() + "\n"
+                );
+            }
+        }.start();
 
     }
 
@@ -75,16 +108,34 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
 
+                SensorData accData = new SensorData();
+                accData.setValues(event.values);
+                accData.setTimestamp(event.timestamp);
+
+                Log.wtf("Acc", String.valueOf(event.timestamp));
+                accSensorEventData.add(accData);
+
                 float x = event.values[0];
                 float y = event.values[1];
                 float z = event.values[2];
 
-                rawData.setText("X: " + x +
-                        "\nY: " + y +
-                        "\nZ: " + z);
+//                rawData.setText("X: " + x +
+//                        "\nY: " + y +
+//                        "\nZ: " + z);
 
                 break;
 
+            case Sensor.TYPE_GYROSCOPE:
+
+                SensorData gyroData = new SensorData();
+                gyroData.setValues(event.values);
+                gyroData.setTimestamp(event.timestamp);
+
+                Log.d("Acc", String.valueOf(event.timestamp));
+                gyroSensorEventData.add(gyroData);
+
+
+                break;
         }
 
     }
