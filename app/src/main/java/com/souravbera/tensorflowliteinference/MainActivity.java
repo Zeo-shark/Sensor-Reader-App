@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
                 else if ((!label[pos].equals("Fall")) && (!label[pos].equals("Jump")))
                 {
-                    if(Math.sqrt(x*x +y*y+ z*z)>9 && (currenttime-startrun)<500000000) {
+                    if(Math.sqrt(x*x +y*y+ z*z)>10 && (currenttime-startrun)<500000000) {
                         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         Notification notification = new Notification.Builder(MainActivity.this)
                                 .setContentTitle("|| Running  ||")
