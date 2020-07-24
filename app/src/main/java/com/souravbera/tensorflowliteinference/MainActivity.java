@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TensorflowClassifier tensorflowClassifier = new TensorflowClassifier();
     private int cntAccx = 0, cntAccy = 0, cntGyrx = 10, cntGyry = 0;
     private float[][][][] data = new float[1][20][20][3];
-    private int countTimer;
 
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final String LABEL_PATH = "labels.txt";
     private static final int[] INPUT_SIZE = {1, 20, 20, 3};
 
-    private float Accx, Accy, Accz, Gyrox, Gyroy, Gyroz, Gravx, Gravy, Gravz;
+    private float Accx, Accy, Accz, Gyrox, Gyroy, Gyroz;
     private float KFilteringFactor = 0.6f;
     private float x, y, z;
     private long startrun=0,currenttime;
@@ -68,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Activity mActivity = this;
-//        sensorRawDataAG = new SensorRawDataAG(mActivity);
         initAndLoadModel();
         text_output = (TextView) findViewById(R.id.text_out);
         Acc_data = (TextView) findViewById(R.id.accel);
@@ -131,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 int pos = 0;
                 float max = 0.0f;
                 float x1, y1, z1;
-                result = tensorflowClassifier.recognizeImage(data);
+                result = tensorflowClassifier.Prediction(data);
                 max = 0.0f;
                 for (int i = 0; i < result[0].length; i++) {
                     if (max < result[0][i]) {
@@ -156,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
                 else if ((!label[pos].equals("Fall")) && (!label[pos].equals("Jump")))
                 {
-                    if(Math.sqrt(x*x +y*y+ z*z)>22 && (currenttime-startrun)<500000000) {
+                    if(Math.sqrt(x*x +y*y+ z*z)>9 && (currenttime-startrun)<500000000) {
                         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         Notification notification = new Notification.Builder(MainActivity.this)
                                 .setContentTitle("|| Running  ||")
@@ -268,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         z = event.values[2];
                         currenttime=event.timestamp;
                         if(Math.sqrt(event.values[0]*event.values[0]+event.values[1]*event.values[1]+event.values[2]*event.values[2])<2.8){
+                            Log.d("Start Run","Triggered");
                             startrun=event.timestamp;
                         }
                         Accx = (int) (255 * (event.values[0] + 16)) / 32.0f;

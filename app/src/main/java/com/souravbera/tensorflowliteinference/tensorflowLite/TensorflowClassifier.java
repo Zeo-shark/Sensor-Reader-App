@@ -42,7 +42,7 @@ public class TensorflowClassifier implements Classifier {
     }
 
 
-    public float[][] recognizeImage(float[][][][] input_data) {
+    public float[][] Prediction(float[][][][] input_data) {
         List<String> labelList = classifier.labelList;
         Interpreter interpreter = classifier.interpreter;
         float[][][][] input = input_data;
